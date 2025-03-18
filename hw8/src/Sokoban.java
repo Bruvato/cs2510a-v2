@@ -528,7 +528,6 @@ abstract class AContent implements IContent {
      * level.levelWon() - boolean
      * level.levelLost() - boolean
      * level.movePlayer(String direction) - Level
-     * level.movePushable(String direction) - Level
      * level.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
      * level.updateLevel() - Level
      * level.undoMove() - Level
@@ -932,33 +931,26 @@ class Level {
     return true;
   }
 
-  // creates a new level with the player moved to a given direction if possible
+  // creates a new level with the player and pushable moved in a given direction if possible
   Level movePlayer(String direction) {
     Posn moveToPos = this.playerPos.movePosn(direction); // pos of where player is moving to
+    Posn pushToPos = moveToPos.movePosn(direction); // pos of where pushable is moving to
 
     IContent player = this.findCell(this.playerPos).content;
-
-    if (!player.canMoveTo(moveToPos, this)) {
-      return this; // return the old level when player cannot move
-    }
-
-    return this.boardSwitch(moveToPos, this.playerPos, moveToPos, this.prevLevel, this.steps + 1);
-  }
-
-  // creates a new level with the pushable moved to a given direction if possible
-  Level movePushable(String direction) {
-    Posn moveToPos = this.playerPos.movePosn(direction);
-    Posn pushToPos = moveToPos.movePosn(direction);
-
     IContent pushable = this.findCell(moveToPos).content;
 
-    if (!pushable.canMoveTo(pushToPos, this)) {
-      // return the old level when pushable cannot move
-      return new Level(this.board, this.playerPos, this, this.steps);
+    if (pushable.canMoveTo(pushToPos, this)){ // can push implies can move
+      return this.boardSwitch(pushToPos, moveToPos, this.playerPos, this, this.steps)
+              .boardSwitch(moveToPos, this.playerPos, moveToPos, this, this.steps + 1);
     }
 
-    return this.boardSwitch(pushToPos, moveToPos, this.playerPos, this, this.steps);
+    if (player.canMoveTo(moveToPos, this)) { // cannot push but can move
+      return this.boardSwitch(moveToPos, this.playerPos, moveToPos, this, this.steps + 1);
+    }
+
+    return this; // cannot push, cannot move
   }
+
 
   // creates a new Level with the contents at the two given positions switched
   Level boardSwitch(Posn pos1, Posn pos2, Posn playerPos, Level prevLevel, int steps) {
@@ -1043,7 +1035,6 @@ class Level {
    * this.levelWon() - boolean
    * this.levelLost() - boolean
    * this.movePlayer(String direction) - Level
-   * this.movePushable(String direction) - Level
    * this.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
    * this.updateLevel() - Level
    * this.undoMove() - Level
@@ -1090,7 +1081,7 @@ class Sokoban extends World {
   // handles key events
   public void onKeyEvent(String key) {
     if (key.equals("up") || key.equals("down") || key.equals("right") || key.equals("left")) {
-      this.level = this.level.movePushable(key).movePlayer(key).updateLevel();
+      this.level = this.level.movePlayer(key).updateLevel();
     }
     if (key.equals("u")) {
       this.level = this.level.undoMove();
@@ -1203,7 +1194,7 @@ class ExamplesSokoban {
 
     gameLevel = new Level(gameGround, gameContent);
 
-    game = new Sokoban(ice2);
+    game = new Sokoban(gameLevel);
   }
 
   void testBigBang(Tester t) {
@@ -1478,34 +1469,21 @@ class ExamplesSokoban {
     this.init();
 
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePlayer("up"); // move into wall, no change
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePlayer("left"); // move into blank, moved
-    t.checkExpect(this.gameLevel.playerPos, new Posn(1, 2));
-    this.gameLevel = this.gameLevel.movePlayer("right");
-    this.gameLevel = this.gameLevel.movePlayer("right"); // move into trophy, no change
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-  }
-
-  void testMovePushable(Tester t) {
-    this.init();
-
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePushable("up").movePlayer("up");
+    this.gameLevel = this.gameLevel.movePlayer("up");
     // push wall - no change, move into wall - no change
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
+    this.gameLevel = this.gameLevel.movePlayer("left");
     // push blank into wall - no change, move into blank - moved
     t.checkExpect(this.gameLevel.playerPos, new Posn(1, 2));
-    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    this.gameLevel = this.gameLevel.movePlayer("right");
     // push blank into trophy - no change, move into blank - moved
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    this.gameLevel = this.gameLevel.movePlayer("right");
     // push trophy into blank - pushed, move into blank - moved
     t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2));
-    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    this.gameLevel = this.gameLevel.movePlayer("right");
     t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2));
-    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    this.gameLevel = this.gameLevel.movePlayer("right");
     // push trophy into wall - no change, move into trophy - no change
     t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2));
   }
@@ -1704,12 +1682,12 @@ class ExamplesSokoban {
     // hole on the bottom right
     t.checkExpect(updateTest.findCell(new Posn(3, 1)), new Cell(new Hole(), new Blank()));
     // push box into the hole at bottom right
-    updateTest = updateTest.movePushable("right").movePlayer("right");
+    updateTest = updateTest.movePlayer("right");
     updateTest = updateTest.updateLevel();
     t.checkExpect(updateTest.findCell(new Posn(3, 1)), new Cell(new Normal(), new Blank()));
-    updateTest = updateTest.movePushable("up").movePlayer("up");
-    updateTest = updateTest.movePushable("left").movePlayer("left");
-    updateTest = updateTest.movePushable("left").movePlayer("left");
+    updateTest = updateTest.movePlayer("up");
+    updateTest = updateTest.movePlayer("left");
+    updateTest = updateTest.movePlayer("left");
     updateTest = updateTest.updateLevel();
     t.checkExpect(updateTest.findCell(new Posn(0, 0)), new Cell(new Normal(), new Blank()));
   }
@@ -1719,13 +1697,13 @@ class ExamplesSokoban {
 
     // FIXME gamelevel.playerpos field of field in tests allowed? (also in testMovePlayer)
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // init player pos
-    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
+    this.gameLevel = this.gameLevel.movePlayer("left");
     t.checkExpect(this.gameLevel.playerPos, new Posn(1, 2)); // check player moved left
     this.gameLevel = this.gameLevel.undoMove();
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // player back at init pos
-    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    this.gameLevel = this.gameLevel.movePlayer("right");
     t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2)); // check player pushed and moved right
-    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    this.gameLevel = this.gameLevel.movePlayer("right");
     t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2)); // check player pushed and moved right
     this.gameLevel = this.gameLevel.undoMove();
     t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2)); // check player pos undo
@@ -1744,9 +1722,9 @@ class ExamplesSokoban {
 
     // FIXME fof
     t.checkExpect(this.gameLevel.steps, 0); // init score
-    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
+    this.gameLevel = this.gameLevel.movePlayer("left");
     t.checkExpect(this.gameLevel.steps, 1); // score inc on move
-    this.gameLevel = this.gameLevel.movePushable("up").movePlayer("up");
+    this.gameLevel = this.gameLevel.movePlayer("up");
     t.checkExpect(this.gameLevel.steps, 1); // no move, no change
     this.gameLevel = this.gameLevel.undoMove();
     t.checkExpect(this.gameLevel.steps, 2); // score inc on undo
