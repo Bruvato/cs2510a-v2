@@ -16,7 +16,7 @@ class Constants {
   static final int CELL_HEIGHT = 120;
 
   static WorldImage NORMAL_SPRITE = new RectangleImage(CELL_WIDTH, CELL_HEIGHT, OutlineMode.OUTLINE,
-          Color.BLACK);
+      Color.BLACK);
   static WorldImage PLAYER_SPRITE = new FromFileImage("./src/assets/player.png");
   static WorldImage WALL_SPRITE = new FromFileImage("./src/assets/wall.png");
   static WorldImage BOX_SPRITE = new FromFileImage("./src/assets/box.png");
@@ -24,24 +24,24 @@ class Constants {
   static WorldImage ICE_SPRITE = new FromFileImage("./src/assets/ice.png");
 
   static WorldImage TARGET_RED_SPRITE = new OverlayImage(
-          new CircleImage(25, OutlineMode.SOLID, Color.RED),
-          new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
-                  new CircleImage(60, OutlineMode.SOLID, Color.RED)));
+      new CircleImage(25, OutlineMode.SOLID, Color.RED),
+      new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
+          new CircleImage(60, OutlineMode.SOLID, Color.RED)));
 
   static WorldImage TARGET_BLUE_SPRITE = new OverlayImage(
-          new CircleImage(25, OutlineMode.SOLID, Color.BLUE),
-          new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
-                  new CircleImage(60, OutlineMode.SOLID, Color.BLUE)));
+      new CircleImage(25, OutlineMode.SOLID, Color.BLUE),
+      new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
+          new CircleImage(60, OutlineMode.SOLID, Color.BLUE)));
 
   static WorldImage TARGET_GREEN_SPRITE = new OverlayImage(
-          new CircleImage(25, OutlineMode.SOLID, Color.GREEN),
-          new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
-                  new CircleImage(60, OutlineMode.SOLID, Color.GREEN)));
+      new CircleImage(25, OutlineMode.SOLID, Color.GREEN),
+      new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
+          new CircleImage(60, OutlineMode.SOLID, Color.GREEN)));
 
   static WorldImage TARGET_YELLOW_SPRITE = new OverlayImage(
-          new CircleImage(25, OutlineMode.SOLID, Color.YELLOW),
-          new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
-                  new CircleImage(60, OutlineMode.SOLID, Color.YELLOW)));
+      new CircleImage(25, OutlineMode.SOLID, Color.YELLOW),
+      new OverlayImage(new CircleImage(45, OutlineMode.SOLID, Color.WHITE),
+          new CircleImage(60, OutlineMode.SOLID, Color.YELLOW)));
 
 }
 
@@ -59,16 +59,16 @@ class Utils {
   // Converts the given color to an image of a target with the corresponding color
   static WorldImage colorToTargetSprite(String color) {
     switch (color) {
-      case "red":
-        return Constants.TARGET_RED_SPRITE;
-      case "green":
-        return Constants.TARGET_GREEN_SPRITE;
-      case "blue":
-        return Constants.TARGET_BLUE_SPRITE;
-      case "yellow":
-        return Constants.TARGET_YELLOW_SPRITE;
-      default:
-        throw new RuntimeException("Target of the given color is not in our library. sorry :(");
+    case "red":
+      return Constants.TARGET_RED_SPRITE;
+    case "green":
+      return Constants.TARGET_GREEN_SPRITE;
+    case "blue":
+      return Constants.TARGET_BLUE_SPRITE;
+    case "yellow":
+      return Constants.TARGET_YELLOW_SPRITE;
+    default:
+      throw new RuntimeException("Target of the given color is not in our library. sorry :(");
     }
   }
 
@@ -109,52 +109,52 @@ class Utils {
   // Returns the ground represented by the given string ground
   static IGround makeGround(String groundStr) {
     switch (groundStr) {
-      case "Y":
-        return new Target("yellow");
-      case "G":
-        return new Target("green");
-      case "B":
-        return new Target("blue");
-      case "R":
-        return new Target("red");
-      case "H":
-        return new Hole();
-      case "I":
-        return new Ice();
-      case "_":
-        return new Normal();
-      default:
-        throw new IllegalArgumentException("invalid ground cell description: " + groundStr);
+    case "Y":
+      return new Target("yellow");
+    case "G":
+      return new Target("green");
+    case "B":
+      return new Target("blue");
+    case "R":
+      return new Target("red");
+    case "H":
+      return new Hole();
+    case "I":
+      return new Ice();
+    case "_":
+      return new Normal();
+    default:
+      throw new IllegalArgumentException("invalid ground cell description: " + groundStr);
     }
   }
 
   // Returns the content represented by the given string
   static IContent makeContent(String contentStr) {
     switch (contentStr) {
-      case "y":
-        return new Trophy("yellow");
-      case "g":
-        return new Trophy("green");
-      case "b":
-        return new Trophy("blue");
-      case "r":
-        return new Trophy("red");
-      case "W":
-        return new Wall();
-      case "B":
-        return new Box();
-      case ">":
-        return new Player("right");
-      case "<":
-        return new Player("left");
-      case "^":
-        return new Player("up");
-      case "v":
-        return new Player("down");
-      case "_":
-        return new Blank();
-      default:
-        throw new IllegalArgumentException("invalid content cell description: " + contentStr);
+    case "y":
+      return new Trophy("yellow");
+    case "g":
+      return new Trophy("green");
+    case "b":
+      return new Trophy("blue");
+    case "r":
+      return new Trophy("red");
+    case "W":
+      return new Wall();
+    case "B":
+      return new Box();
+    case ">":
+      return new Player("right");
+    case "<":
+      return new Player("left");
+    case "^":
+      return new Player("up");
+    case "v":
+      return new Player("down");
+    case "_":
+      return new Blank();
+    default:
+      throw new IllegalArgumentException("invalid content cell description: " + contentStr);
     }
   }
 
@@ -245,16 +245,16 @@ class Posn {
   // Calculates a new posn based on the given direction
   Posn movePosn(String direction) {
     switch (direction) {
-      case "up":
-        return new Posn(this.col, this.row - 1);
-      case "right":
-        return new Posn(this.col + 1, this.row);
-      case "down":
-        return new Posn(this.col, this.row + 1);
-      case "left":
-        return new Posn(this.col - 1, this.row);
-      default:
-        throw new IllegalArgumentException("Invalid direction: " + direction);
+    case "up":
+      return new Posn(this.col, this.row - 1);
+    case "right":
+      return new Posn(this.col + 1, this.row);
+    case "down":
+      return new Posn(this.col, this.row + 1);
+    case "left":
+      return new Posn(this.col - 1, this.row);
+    default:
+      throw new IllegalArgumentException("Invalid direction: " + direction);
     }
   }
 
@@ -262,7 +262,7 @@ class Posn {
   // given by the top left point and the bottom right point
   boolean withinBounds(Posn topLeft, Posn bottomRight) {
     return topLeft.col <= this.col && topLeft.row <= this.row && bottomRight.col >= this.col
-            && bottomRight.row >= this.row;
+        && bottomRight.row >= this.row;
     /* Fields of Parameters
      * topLeft.col - int
      * topLeft.row - int
@@ -329,10 +329,38 @@ class Cell {
     return this.ground.groundFall(this.content);
   }
 
-  // Determines if the content in this cell can slide on the ground
-  boolean cellSlide() { // todo tests templates
-    // todo
-    return false;
+  // determine if this content can move to the given position
+  public boolean canMoveToCell(Posn moveToPos, Level level) {
+    Posn topLeft = new Posn(0, 0);
+    Posn bottomRight = new Posn(level.board.get(0).size() - 1, level.board.size() - 1);
+
+    if (!moveToPos.withinBounds(topLeft, bottomRight)) {
+      return false; // return false if move position is out of bounds
+    }
+    if (this.content.isFixed()) {
+      return false; // return false if this content is fixed
+    }
+
+    IContent moveToContent = level.findCell(moveToPos).content;
+
+    return moveToContent.isVacant();
+
+    /*
+     * moveToPos.movePosn(String dir) - Posn
+     * moveToPos.withinBounds(Posn topLeft, Posn bottomRight) - boolean
+     * moveToPos.samePosn(Posn pos) - boolean
+     * level.board
+     * level.getCell(Posn posn) - Cell
+     * level.draw() - WorldImage
+     * level.levelWon() - boolean
+     * level.levelLost() - boolean
+     * level.movePlayer(String direction) - Level
+     * level.movePushable(String direction) - Level
+     * level.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
+     * level.updateLevel() - Level
+     * level.undoMove() - Level
+     * level.updateScore() - Level
+     */
   }
 
   /* Fields
@@ -528,6 +556,7 @@ abstract class AContent implements IContent {
      * level.levelWon() - boolean
      * level.levelLost() - boolean
      * level.movePlayer(String direction) - Level
+     * level.movePushable(String direction) - Level
      * level.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
      * level.updateLevel() - Level
      * level.undoMove() - Level
@@ -815,7 +844,7 @@ class Level {
   public Level(String groundStr, String contentsStr) {
     if (groundStr.length() != contentsStr.length()) {
       throw new IllegalArgumentException("Invalid Ground/Content descriptions: "
-              + "Given ground and content strings cannot be of different sizes");
+          + "Given ground and content strings cannot be of different sizes");
     }
     this.board = Utils.makeGrid(groundStr, contentsStr);
     this.playerPos = Utils.findPlayer(contentsStr);
@@ -861,7 +890,7 @@ class Level {
 
     WorldImage scoreImage = new TextImage("Steps: " + this.steps, Color.BLACK);
     WorldImage playerPosImage = new TextImage("Player Position: " + this.playerPos.toString(),
-            Color.BLACK);
+        Color.BLACK);
     IContent player = this.findCell(this.playerPos).content;
 
     // TODO (for debugging) delete this later or test if kept
@@ -880,24 +909,24 @@ class Level {
     IContent right = this.findCell(moveRight).content;
 
     WorldImage moveTo = new TextImage(
-            "move up? " + player.canMoveTo(moveUp, this)
-                    + "\n move down? " + player.canMoveTo(moveDown, this)
-                    + "\n move left? " + player.canMoveTo(moveLeft, this)
-                    + "\n move right? " + player.canMoveTo(moveRight, this), Color.red);
+        "move up? " + player.canMoveTo(moveUp, this)
+            + "\n move down? " + player.canMoveTo(moveDown, this)
+            + "\n move left? " + player.canMoveTo(moveLeft, this)
+            + "\n move right? " + player.canMoveTo(moveRight, this), Color.red);
     WorldImage pushTo = new TextImage(
-            "push up? " + up.canMoveTo(pushUp, this)
-                    + "\n push down? " + down.canMoveTo(pushDown, this)
-                    + "\n push left? " + left.canMoveTo(pushLeft, this)
-                    + "\n push right? " + right.canMoveTo(pushRight, this), Color.red);
+        "push up? " + up.canMoveTo(pushUp, this)
+            + "\n push down? " + down.canMoveTo(pushDown, this)
+            + "\n push left? " + left.canMoveTo(pushLeft, this)
+            + "\n push right? " + right.canMoveTo(pushRight, this), Color.red);
     WorldImage prev = new TextImage("previous position: " + prevLevel.playerPos.toString(), Color.BLUE);
 
     WorldImage above = new AboveAlignImage(
-            AlignModeX.LEFT,
-            scoreImage,
-            playerPosImage,
-            moveTo,
-            pushTo,
-            prev
+        AlignModeX.LEFT,
+        scoreImage,
+        playerPosImage,
+        moveTo,
+        pushTo,
+        prev
     );
     return above.movePinhole(-above.getWidth() / 2, -above.getHeight() / 2);
   }
@@ -931,29 +960,51 @@ class Level {
     return true;
   }
 
-  // creates a new level with the player and pushable moved in a given direction if possible
+  // TODO minor issue within undo where if player moves into wall, they have to undo twice
+  //  we are storing the level where they didn't move as the prevLevel of when they tried to move into wall
+  // creates a new level with the player moved to a given direction if possible
   Level movePlayer(String direction) {
     Posn moveToPos = this.playerPos.movePosn(direction); // pos of where player is moving to
-    Posn pushToPos = moveToPos.movePosn(direction); // pos of where pushable is moving to
 
-    IContent player = this.findCell(this.playerPos).content;
-    IContent pushable = this.findCell(moveToPos).content;
+    Cell playerCell = this.findCell(this.playerPos);
 
-    if (pushable.canMoveTo(pushToPos, this)){ // can push implies can move
-      return this.boardSwitch(pushToPos, moveToPos, this.playerPos, this, this.steps)
-              .boardSwitch(moveToPos, this.playerPos, moveToPos, this, this.steps + 1);
+    if (!playerCell.canMoveToCell(moveToPos, this)) {
+      return this;
     }
 
-    if (player.canMoveTo(moveToPos, this)) { // cannot push but can move
-      return this.boardSwitch(moveToPos, this.playerPos, moveToPos, this, this.steps + 1);
-    }
+//    IContent player = this.findCell(this.playerPos).content;
+//
+//    if (!player.canMoveTo(moveToPos, this)) {
+//      return this; // return the old level when player cannot move
+//    }
 
-    return this; // cannot push, cannot move
+    return this.boardSwitch(moveToPos, this.playerPos, moveToPos, this.prevLevel, this.steps + 1);
   }
 
+  // creates a new level with the pushable moved to a given direction if possible
+  Level movePushable(String direction) {
+    Posn moveToPos = this.playerPos.movePosn(direction);
+    Posn pushToPos = moveToPos.movePosn(direction);
+
+    Cell pushableCell = this.findCell(moveToPos);
+
+    if (!pushableCell.canMoveToCell(pushToPos, this)) {
+      // TODO should the prev level here be this?
+      return new Level(this.board, this.playerPos, this, this.steps);
+    }
+
+//    IContent pushable = this.findCell(moveToPos).content;
+//
+//    if (!pushable.canMoveTo(pushToPos, this)) {
+//      // return the old level when pushable cannot move
+//      return new Level(this.board, this.playerPos, this, this.steps);
+//    }
+
+    return this.boardSwitch(pushToPos, moveToPos, this.playerPos, this, this.steps);
+  }
 
   // creates a new Level with the contents at the two given positions switched
-  Level boardSwitch(Posn pos1, Posn pos2, Posn playerPos, Level prevLevel, int steps) {
+  Level boardSwitch(Posn pos1, Posn pos2, Posn playerPos, Level newPrevLevel, int steps) {
     ArrayList<ArrayList<Cell>> newBoard = new ArrayList<>();
     Cell cell1 = findCell(pos1);
     Cell cell2 = findCell(pos2);
@@ -978,7 +1029,7 @@ class Level {
       newBoard.add(newRow);
     }
 
-    return new Level(newBoard, playerPos, prevLevel, steps);
+    return new Level(newBoard, playerPos, newPrevLevel, steps);
 
     /*
      * pos1.movePosn(String direction) - Posn
@@ -990,8 +1041,26 @@ class Level {
      */
   }
 
+//  Level updateIce(String direction) {
+//    Cell playerCell = this.findCell(this.playerPos);
+//
+//    Level newLevel = this;
+//
+//    // EFFECT: Moves the player in the same direction until they cannot slip on the ice anymore
+//    while (playerCell.isOnIce()) {
+//      // TODO make this method, might be kind of type checking but "I think" we can do it with double dispatch
+//      newLevel = newLevel.movePushable(direction).movePlayer(direction).updateLevel(direction);
+//    }
+//
+//    // the board and posn should change but this all happened in one "player step"
+//    // the player should also only be able to undo to the original move
+//    return new Level(newLevel.board, newLevel.playerPos, this.prevLevel, this.steps);
+//
+//  }
+
   // creates a new level with all of its cells updated
-  Level updateLevel() {
+  // TODO added direction as a parameter pretty sure its fine?
+  Level updateLevel(String direction) {
     ArrayList<ArrayList<Cell>> newBoard = new ArrayList<>();
 
     // EFFECT: populates a new board to account for any object on a hole
@@ -1035,6 +1104,7 @@ class Level {
    * this.levelWon() - boolean
    * this.levelLost() - boolean
    * this.movePlayer(String direction) - Level
+   * this.movePushable(String direction) - Level
    * this.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
    * this.updateLevel() - Level
    * this.undoMove() - Level
@@ -1081,7 +1151,7 @@ class Sokoban extends World {
   // handles key events
   public void onKeyEvent(String key) {
     if (key.equals("up") || key.equals("down") || key.equals("right") || key.equals("left")) {
-      this.level = this.level.movePlayer(key).updateLevel();
+      this.level = this.level.movePushable(key).movePlayer(key).updateLevel(key);
     }
     if (key.equals("u")) {
       this.level = this.level.undoMove();
@@ -1147,40 +1217,40 @@ class ExamplesSokoban {
 
   void init() {
     exampleLevelGround =
-            "________\n" + "___R____\n" + "________\n" + "_B____Y_\n" + "________\n" + "___G____\n"
-                    + "________";
+        "________\n" + "___R____\n" + "________\n" + "_B____Y_\n" + "________\n" + "___G____\n"
+            + "________";
     exampleLevelContents =
-            "__WWW___\n" + "__W_WW__\n" + "WWWr_WWW\n" + "W_b>yB_W\n" + "WW_gWWWW\n" + "_WW_W___\n"
-                    + "__WWW___";
+        "__WWW___\n" + "__W_WW__\n" + "WWWr_WWW\n" + "W_b>yB_W\n" + "WW_gWWWW\n" + "_WW_W___\n"
+            + "__WWW___";
     exampleLevelContents2 =
-            "__WWW___\n" + "__W_WW__\n" + "WWW__WWW\n" + "W__>_B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
-                    + "__WWW___";
+        "__WWW___\n" + "__W_WW__\n" + "WWW__WWW\n" + "W__>_B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
+            + "__WWW___";
     exampleLevelContents2E =
-            "__WWW___\n" + "__W_WW__\n" + "WWW__WWW\n" + "W____B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
-                    + "__WWW___";
+        "__WWW___\n" + "__W_WW__\n" + "WWW__WWW\n" + "W____B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
+            + "__WWW___";
     exampleLevelContents2R =
-            "__WWW___\n" + "__W_WW__\n" + "WWW__WWW\n" + "W___>B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
-                    + "__WWW___";
+        "__WWW___\n" + "__W_WW__\n" + "WWW__WWW\n" + "W___>B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
+            + "__WWW___";
     exampleLevelContents2U =
-            "__WWW___\n" + "__W_WW__\n" + "WWW^_WWW\n" + "W____B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
-                    + "__WWW___";
+        "__WWW___\n" + "__W_WW__\n" + "WWW^_WWW\n" + "W____B_W\n" + "WW__WWWW\n" + "_WW_W___\n"
+            + "__WWW___";
     exampleLevelContents3 =
-            "__WWW___\n" + "__W_WW__\n" + "WWW_rWWW\n" + "Wb_>_ByW\n" + "WW__WWWW\n" + "_WWgW___\n"
-                    + "__WWW___";
+        "__WWW___\n" + "__W_WW__\n" + "WWW_rWWW\n" + "Wb_>_ByW\n" + "WW__WWWW\n" + "_WWgW___\n"
+            + "__WWW___";
     exampleSmallGround = "__B\n" + "_R_";
     exampleSmallContents = "Wb_\n" + ">Br";
 
     exampleIceGround1 = "_________\n___II__B_\n_________";
     exampleIceContent1 = "WWWWWWWWW\nW>b_____W\nWWWWWWWWW";
-    exampleIceGround2 = "________\n__YI____\n__II____\n________\n________";
-    exampleIceContent2 = "_WWWWWWW\nWW_____W\nW>y____W\nWW___WWW\n_WWWWW__";
+    exampleIceGround2 = "";
+    exampleIceContent2 = " ";
 
     gameGround =
-            "________\n" + "________\n" + "_B______\n" + "_____G__\n" + "_R______\n" + "___HY___\n"
-                    + "___B__R_\n" + "____G___\n" + "________";
+        "________\n" + "________\n" + "_B______\n" + "_____G__\n" + "_R______\n" + "___HY___\n"
+            + "___B__R_\n" + "____G___\n" + "________";
     gameContent =
-            "__WWWWW_\n" + "WWW___W_\n" + "W_>b__W_\n" + "WWW_g_W_\n" + "W_WWy_W_\n" + "W_W___WW\n"
-                    + "Wr_bgr_W\n" + "W______W\n" + "WWWWWWWW";
+        "__WWWWW_\n" + "WWW___W_\n" + "W_>b__W_\n" + "WWW_g_W_\n" + "W_WWy_W_\n" + "W_W___WW\n"
+            + "Wr_bgr_W\n" + "W______W\n" + "WWWWWWWW";
 
     blernerLevel = new Level(exampleLevelGround, exampleLevelContents);
     blernerLevel2 = new Level(exampleLevelGround, exampleLevelContents2);
@@ -1190,11 +1260,10 @@ class ExamplesSokoban {
     blernerLevel3 = new Level(exampleLevelGround, exampleLevelContents3);
     small = new Level(exampleSmallGround, exampleSmallContents);
     ice1 = new Level(exampleIceGround1, exampleIceContent1);
-    ice2 = new Level(exampleIceGround2, exampleIceContent2);
 
     gameLevel = new Level(gameGround, gameContent);
 
-    game = new Sokoban(gameLevel);
+    game = new Sokoban(ice1);
   }
 
   void testBigBang(Tester t) {
@@ -1209,13 +1278,13 @@ class ExamplesSokoban {
     Utils utils = new Utils(); // have to create to exception test
 
     t.checkExpect(Utils.colorToTrophySprite("blue"),
-            new FromFileImage("./src/assets/trophy_blue.png"));
+        new FromFileImage("./src/assets/trophy_blue.png"));
     t.checkExpect(Utils.colorToTrophySprite("green"),
-            new FromFileImage("./src/assets/trophy_green.png"));
+        new FromFileImage("./src/assets/trophy_green.png"));
     t.checkExpect(Utils.colorToTrophySprite("red"),
-            new FromFileImage("./src/assets/trophy_red.png"));
+        new FromFileImage("./src/assets/trophy_red.png"));
     t.checkExpect(Utils.colorToTrophySprite("yellow"),
-            new FromFileImage("./src/assets/trophy_yellow.png"));
+        new FromFileImage("./src/assets/trophy_yellow.png"));
     t.checkExceptionType(RuntimeException.class, utils, "colorToTrophySprite", "black");
   }
 
@@ -1303,9 +1372,9 @@ class ExamplesSokoban {
     t.checkExpect(Utils.makeGrid("_R\n" + "G_", "Wr\n" + ">B"), grid);
     t.checkExpect(testMakeGridLevel, new Level("_R\n" + "G_", "Wr\n" + ">B"));
     t.checkConstructorExceptionType(IllegalArgumentException.class, "Level", "_R\nG__",
-            "Wr\n" + ">B");
+        "Wr\n" + ">B");
     t.checkConstructorExceptionType(IllegalArgumentException.class, "Level", exampleLevelGround,
-            exampleLevelContents2E);
+        exampleLevelContents2E);
 
     this.init();
 
@@ -1331,8 +1400,8 @@ class ExamplesSokoban {
     t.checkExpect(new Cell(new Normal(), new Trophy("blue")).cellLost(), true);
     t.checkExpect(new Cell(new Target("red"), new Box()).cellLost(), true);
     t.checkExpect(new Cell(new Hole(), new Blank()).cellLost(), true);
-    t.checkExpect(new Cell(new Hole(), new Player("up")).cellLost(), false);
-    t.checkExpect(new Cell(new Normal(), new Player("up")).cellLost(), false);
+    t.checkExpect(new Cell(new Hole(), new Player("^")).cellLost(), false);
+    t.checkExpect(new Cell(new Normal(), new Player("^")).cellLost(), false);
   }
 
   void testLevelWon(Tester t) {
@@ -1430,19 +1499,19 @@ class ExamplesSokoban {
 
     t.checkExpect(gameLevel.findCell(new Posn(0, 0)), new Cell(new Normal(), new Blank()));
     t.checkExpect(blernerLevel3.findCell(new Posn(4, 2)),
-            new Cell(new Normal(), new Trophy("red")));
+        new Cell(new Normal(), new Trophy("red")));
     t.checkExceptionType(RuntimeException.class, gameLevel, "findCell", new Posn(100, 100));
   }
 
   void testDrawLevel(Tester t) {
     this.init();
 
-    WorldImage NormalPlayer = new Cell(new Normal(), new Player("right")).cellToImage();
+    WorldImage NormalPlayer = new Cell(new Normal(), new Player(">")).cellToImage();
     WorldImage RedBox = new Cell(new Target("red"), new Box()).cellToImage();
     WorldImage NormalRed = new Cell(new Normal(), new Trophy("red")).cellToImage();
 
     WorldImage rowTwoImage = new BesideImage(
-            new BesideImage(new BesideImage(new EmptyImage(), NormalPlayer), RedBox), NormalRed);
+        new BesideImage(new BesideImage(new EmptyImage(), NormalPlayer), RedBox), NormalRed);
 
     String smallRowTwoGround = "_R_";
     String smallRowTwoContent = ">Br";
@@ -1455,8 +1524,8 @@ class ExamplesSokoban {
     WorldImage BlueBlank = new Cell(new Target("blue"), new Blank()).cellToImage();
 
     t.checkExpect(small.draw(), new AboveImage(new AboveImage(new EmptyImage(),
-            new BesideImage(new BesideImage(new BesideImage(new EmptyImage(), NormalWall),
-                    NormalBlue), BlueBlank)), rowTwoImage));
+        new BesideImage(new BesideImage(new BesideImage(new EmptyImage(), NormalWall),
+            NormalBlue), BlueBlank)), rowTwoImage));
   }
 
   void testDrawStats(Tester t) {
@@ -1469,21 +1538,34 @@ class ExamplesSokoban {
     this.init();
 
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePlayer("up");
-    // push wall - no change, move into wall - no change
+    this.gameLevel = this.gameLevel.movePlayer("up"); // move into wall, no change
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePlayer("left");
-    // push blank into wall - no change, move into blank - moved
+    this.gameLevel = this.gameLevel.movePlayer("left"); // move into blank, moved
     t.checkExpect(this.gameLevel.playerPos, new Posn(1, 2));
     this.gameLevel = this.gameLevel.movePlayer("right");
+    this.gameLevel = this.gameLevel.movePlayer("right"); // move into trophy, no change
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
+  }
+
+  void testMovePushable(Tester t) {
+    this.init();
+
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
+    this.gameLevel = this.gameLevel.movePushable("up").movePlayer("up");
+    // push wall - no change, move into wall - no change
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
+    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
+    // push blank into wall - no change, move into blank - moved
+    t.checkExpect(this.gameLevel.playerPos, new Posn(1, 2));
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
     // push blank into trophy - no change, move into blank - moved
     t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2));
-    this.gameLevel = this.gameLevel.movePlayer("right");
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
     // push trophy into blank - pushed, move into blank - moved
     t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2));
-    this.gameLevel = this.gameLevel.movePlayer("right");
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
     t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2));
-    this.gameLevel = this.gameLevel.movePlayer("right");
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
     // push trophy into wall - no change, move into trophy - no change
     t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2));
   }
@@ -1492,23 +1574,23 @@ class ExamplesSokoban {
     this.init();
 
     t.checkExpect(this.gameLevel.boardSwitch(new Posn(0, 0), new Posn(1, 0),
-            this.gameLevel.playerPos, this.gameLevel, 0), this.gameLevel);
+        this.gameLevel.playerPos, this.gameLevel, 0), this.gameLevel);
 
     init();
 
     this.gameLevel = this.gameLevel.boardSwitch(new Posn(2, 2), new Posn(3, 2),
-            this.gameLevel.playerPos, this.gameLevel, 0);
+        this.gameLevel.playerPos, this.gameLevel, 0);
 
     t.checkExpect(this.gameLevel.findCell(new Posn(3, 2)),
-            new Cell(new Normal(), new Player("right")));
+        new Cell(new Normal(), new Player("right")));
 
     this.init();
 
     this.gameLevel = this.gameLevel.boardSwitch(new Posn(2, 2), new Posn(1, 2),
-            this.gameLevel.playerPos, this.gameLevel, 0);
+        this.gameLevel.playerPos, this.gameLevel, 0);
 
     t.checkExpect(this.gameLevel.findCell(new Posn(1, 2)),
-            new Cell(new Target("blue"), new Player("right")));
+        new Cell(new Target("blue"), new Player("right")));
 
   }
 
@@ -1520,9 +1602,9 @@ class ExamplesSokoban {
     WorldImage BlueBlank = new Cell(new Target("blue"), new Blank()).cellToImage();
 
     t.checkExpect(NormalWall,
-            new OverlayImage(new FromFileImage("./src/assets/wall.png"), Constants.NORMAL_SPRITE));
+        new OverlayImage(new FromFileImage("./src/assets/wall.png"), Constants.NORMAL_SPRITE));
     t.checkExpect(NormalBlue,
-            new OverlayImage(Utils.colorToTrophySprite("blue"), Constants.NORMAL_SPRITE));
+        new OverlayImage(Utils.colorToTrophySprite("blue"), Constants.NORMAL_SPRITE));
     t.checkExpect(BlueBlank, new OverlayImage(new EmptyImage(), Constants.TARGET_BLUE_SPRITE));
   }
 
@@ -1544,19 +1626,19 @@ class ExamplesSokoban {
     this.init();
 
     t.checkExpect(gameLevel.findCell(new Posn(2, 2)).content.canMoveTo(new Posn(1, 2), gameLevel),
-            true); // move player to blank - true
+        true); // move player to blank - true
     t.checkExpect(gameLevel.findCell(new Posn(2, 2)).content.canMoveTo(new Posn(2, 1), gameLevel),
-            false); // move player to wall - false
+        false); // move player to wall - false
     t.checkExpect(gameLevel.findCell(new Posn(2, 2)).content.canMoveTo(new Posn(3, 2), gameLevel),
-            false); // move player to trophy - false
+        false); // move player to trophy - false
     t.checkExpect(gameLevel.findCell(new Posn(3, 2)).content.canMoveTo(new Posn(4, 2), gameLevel),
-            true); // move trophy to blank - true
+        true); // move trophy to blank - true
     t.checkExpect(gameLevel.findCell(new Posn(4, 4)).content.canMoveTo(new Posn(3, 4), gameLevel),
-            false); // move trophy to wall - false
+        false); // move trophy to wall - false
     t.checkExpect(gameLevel.findCell(new Posn(1, 2)).content.canMoveTo(new Posn(1, 1), gameLevel),
-            false); // move blank to wall - false
+        false); // move blank to wall - false
     t.checkExpect(gameLevel.findCell(new Posn(0, 0)).content.canMoveTo(new Posn(1, 0), gameLevel),
-            true); // move blank to blank - true
+        true); // move blank to blank - true
   }
 
   // Ground methods
@@ -1607,10 +1689,10 @@ class ExamplesSokoban {
     t.checkExpect(new Trophy("yellow").contentToImage(), Utils.colorToTrophySprite("yellow"));
     t.checkExpect(new Trophy("green").contentToImage(), Utils.colorToTrophySprite("green"));
 
-    t.checkExpect(new Player("down").contentToImage(), Constants.PLAYER_SPRITE);
-    t.checkExpect(new Player("right").contentToImage(), Constants.PLAYER_SPRITE);
-    t.checkExpect(new Player("left").contentToImage(), Constants.PLAYER_SPRITE);
-    t.checkExpect(new Player("up").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player("v").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player(">").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player("<").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player("^").contentToImage(), Constants.PLAYER_SPRITE);
   }
 
   void testContentWon(Tester t) {
@@ -1626,7 +1708,7 @@ class ExamplesSokoban {
     t.checkExpect(new Trophy("blue").contentWon(new Target("blue")), true);
     t.checkExpect(new Trophy("yellow").contentWon(new Target("yellow")), true);
 
-    t.checkExpect(new Player("right").contentWon(new Target("red")), false);
+    t.checkExpect(new Player(">").contentWon(new Target("red")), false);
   }
 
   void testContentLost(Tester t) {
@@ -1677,18 +1759,18 @@ class ExamplesSokoban {
 
     Level updateTest = new Level(testUpdateGround, testUpdateContent);
     t.checkExpect(updateTest.findCell(new Posn(2, 0)), new Cell(new Hole(), new Trophy("blue")));
-    updateTest = updateTest.updateLevel();
+    updateTest = updateTest.updateLevel("up");
     t.checkExpect(updateTest.findCell(new Posn(2, 0)), new Cell(new Normal(), new Blank()));
     // hole on the bottom right
     t.checkExpect(updateTest.findCell(new Posn(3, 1)), new Cell(new Hole(), new Blank()));
     // push box into the hole at bottom right
-    updateTest = updateTest.movePlayer("right");
-    updateTest = updateTest.updateLevel();
+    updateTest = updateTest.movePushable("right").movePlayer("right");
+    updateTest = updateTest.updateLevel("right");
     t.checkExpect(updateTest.findCell(new Posn(3, 1)), new Cell(new Normal(), new Blank()));
-    updateTest = updateTest.movePlayer("up");
-    updateTest = updateTest.movePlayer("left");
-    updateTest = updateTest.movePlayer("left");
-    updateTest = updateTest.updateLevel();
+    updateTest = updateTest.movePushable("up").movePlayer("up");
+    updateTest = updateTest.movePushable("left").movePlayer("left");
+    updateTest = updateTest.movePushable("left").movePlayer("left");
+    updateTest = updateTest.updateLevel("left");
     t.checkExpect(updateTest.findCell(new Posn(0, 0)), new Cell(new Normal(), new Blank()));
   }
 
@@ -1696,25 +1778,25 @@ class ExamplesSokoban {
     this.init();
 
     // FIXME gamelevel.playerpos field of field in tests allowed? (also in testMovePlayer)
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // init player pos
-    this.gameLevel = this.gameLevel.movePlayer("left");
-    t.checkExpect(this.gameLevel.playerPos, new Posn(1, 2)); // check player moved left
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // init player pos
+    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
+    t.checkExpect(this.gameLevel.playerPos, new Posn(1,2)); // check player moved left
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // player back at init pos
-    this.gameLevel = this.gameLevel.movePlayer("right");
-    t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2)); // check player pushed and moved right
-    this.gameLevel = this.gameLevel.movePlayer("right");
-    t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2)); // check player pushed and moved right
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // player back at init pos
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    t.checkExpect(this.gameLevel.playerPos, new Posn(3,2)); // check player pushed and moved right
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    t.checkExpect(this.gameLevel.playerPos, new Posn(4,2)); // check player pushed and moved right
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2)); // check player pos undo
-    t.checkExpect(this.gameLevel.findCell(new Posn(4, 2)).content,
-            new Trophy("blue")); // check trophy undo
+    t.checkExpect(this.gameLevel.playerPos, new Posn(3,2)); // check player pos undo
+    t.checkExpect(this.gameLevel.findCell(new Posn(4,2)).content,
+        new Trophy("blue")); // check trophy undo
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // check player pos undo
-    t.checkExpect(this.gameLevel.findCell(new Posn(3, 2)).content,
-            new Trophy("blue")); // check trophy undo
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // check player pos undo
+    t.checkExpect(this.gameLevel.findCell(new Posn(3,2)).content,
+        new Trophy("blue")); // check trophy undo
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // no change, no more prev level
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // no change, no more prev level
   }
 
   void testUpdateScore(Tester t) {
@@ -1722,9 +1804,9 @@ class ExamplesSokoban {
 
     // FIXME fof
     t.checkExpect(this.gameLevel.steps, 0); // init score
-    this.gameLevel = this.gameLevel.movePlayer("left");
+    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
     t.checkExpect(this.gameLevel.steps, 1); // score inc on move
-    this.gameLevel = this.gameLevel.movePlayer("up");
+    this.gameLevel = this.gameLevel.movePushable("up").movePlayer("up");
     t.checkExpect(this.gameLevel.steps, 1); // no move, no change
     this.gameLevel = this.gameLevel.undoMove();
     t.checkExpect(this.gameLevel.steps, 2); // score inc on undo
