@@ -329,6 +329,12 @@ class Cell {
     return this.ground.groundFall(this.content);
   }
 
+  // Determines if the content in this cell can slide on the ground
+  boolean cellSlide() { // todo tests templates
+    // todo
+    return false;
+  }
+
   /* Fields
    * this.ground - IGround
    * this.content - IContent
@@ -1175,8 +1181,8 @@ class ExamplesSokoban {
 
     exampleIceGround1 = "_________\n___II__B_\n_________";
     exampleIceContent1 = "WWWWWWWWW\nW>b_____W\nWWWWWWWWW";
-    exampleIceGround2 = "";
-    exampleIceContent2 = " ";
+    exampleIceGround2 = "________\n__YI____\n__II____\n________\n________";
+    exampleIceContent2 = "_WWWWWWW\nWW_____W\nW>y____W\nWW___WWW\n_WWWWW__";
 
     gameGround =
             "________\n" + "________\n" + "_B______\n" + "_____G__\n" + "_R______\n" + "___HY___\n"
@@ -1193,10 +1199,11 @@ class ExamplesSokoban {
     blernerLevel3 = new Level(exampleLevelGround, exampleLevelContents3);
     small = new Level(exampleSmallGround, exampleSmallContents);
     ice1 = new Level(exampleIceGround1, exampleIceContent1);
+    ice2 = new Level(exampleIceGround2, exampleIceContent2);
 
     gameLevel = new Level(gameGround, gameContent);
 
-    game = new Sokoban(ice1);
+    game = new Sokoban(ice2);
   }
 
   void testBigBang(Tester t) {
@@ -1333,8 +1340,8 @@ class ExamplesSokoban {
     t.checkExpect(new Cell(new Normal(), new Trophy("blue")).cellLost(), true);
     t.checkExpect(new Cell(new Target("red"), new Box()).cellLost(), true);
     t.checkExpect(new Cell(new Hole(), new Blank()).cellLost(), true);
-    t.checkExpect(new Cell(new Hole(), new Player("^")).cellLost(), false);
-    t.checkExpect(new Cell(new Normal(), new Player("^")).cellLost(), false);
+    t.checkExpect(new Cell(new Hole(), new Player("up")).cellLost(), false);
+    t.checkExpect(new Cell(new Normal(), new Player("up")).cellLost(), false);
   }
 
   void testLevelWon(Tester t) {
@@ -1439,7 +1446,7 @@ class ExamplesSokoban {
   void testDrawLevel(Tester t) {
     this.init();
 
-    WorldImage NormalPlayer = new Cell(new Normal(), new Player(">")).cellToImage();
+    WorldImage NormalPlayer = new Cell(new Normal(), new Player("right")).cellToImage();
     WorldImage RedBox = new Cell(new Target("red"), new Box()).cellToImage();
     WorldImage NormalRed = new Cell(new Normal(), new Trophy("red")).cellToImage();
 
@@ -1622,10 +1629,10 @@ class ExamplesSokoban {
     t.checkExpect(new Trophy("yellow").contentToImage(), Utils.colorToTrophySprite("yellow"));
     t.checkExpect(new Trophy("green").contentToImage(), Utils.colorToTrophySprite("green"));
 
-    t.checkExpect(new Player("v").contentToImage(), Constants.PLAYER_SPRITE);
-    t.checkExpect(new Player(">").contentToImage(), Constants.PLAYER_SPRITE);
-    t.checkExpect(new Player("<").contentToImage(), Constants.PLAYER_SPRITE);
-    t.checkExpect(new Player("^").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player("down").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player("right").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player("left").contentToImage(), Constants.PLAYER_SPRITE);
+    t.checkExpect(new Player("up").contentToImage(), Constants.PLAYER_SPRITE);
   }
 
   void testContentWon(Tester t) {
@@ -1641,7 +1648,7 @@ class ExamplesSokoban {
     t.checkExpect(new Trophy("blue").contentWon(new Target("blue")), true);
     t.checkExpect(new Trophy("yellow").contentWon(new Target("yellow")), true);
 
-    t.checkExpect(new Player(">").contentWon(new Target("red")), false);
+    t.checkExpect(new Player("right").contentWon(new Target("red")), false);
   }
 
   void testContentLost(Tester t) {
@@ -1711,25 +1718,25 @@ class ExamplesSokoban {
     this.init();
 
     // FIXME gamelevel.playerpos field of field in tests allowed? (also in testMovePlayer)
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // init player pos
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // init player pos
     this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
-    t.checkExpect(this.gameLevel.playerPos, new Posn(1,2)); // check player moved left
+    t.checkExpect(this.gameLevel.playerPos, new Posn(1, 2)); // check player moved left
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // player back at init pos
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // player back at init pos
     this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
-    t.checkExpect(this.gameLevel.playerPos, new Posn(3,2)); // check player pushed and moved right
+    t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2)); // check player pushed and moved right
     this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
-    t.checkExpect(this.gameLevel.playerPos, new Posn(4,2)); // check player pushed and moved right
+    t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2)); // check player pushed and moved right
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(3,2)); // check player pos undo
-    t.checkExpect(this.gameLevel.findCell(new Posn(4,2)).content,
+    t.checkExpect(this.gameLevel.playerPos, new Posn(3, 2)); // check player pos undo
+    t.checkExpect(this.gameLevel.findCell(new Posn(4, 2)).content,
             new Trophy("blue")); // check trophy undo
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // check player pos undo
-    t.checkExpect(this.gameLevel.findCell(new Posn(3,2)).content,
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // check player pos undo
+    t.checkExpect(this.gameLevel.findCell(new Posn(3, 2)).content,
             new Trophy("blue")); // check trophy undo
     this.gameLevel = this.gameLevel.undoMove();
-    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // no change, no more prev level
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2, 2)); // no change, no more prev level
   }
 
   void testUpdateScore(Tester t) {
