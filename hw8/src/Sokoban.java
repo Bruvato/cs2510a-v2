@@ -15,7 +15,6 @@ class Constants {
   static final int CELL_WIDTH = 120;
   static final int CELL_HEIGHT = 120;
 
-  // TODO ensure file paths are correct
   static WorldImage NORMAL_SPRITE = new RectangleImage(CELL_WIDTH, CELL_HEIGHT, OutlineMode.OUTLINE,
           Color.BLACK);
   static WorldImage PLAYER_SPRITE = new FromFileImage("./src/assets/player.png");
@@ -282,7 +281,7 @@ class Posn {
     return pos.col == this.col && pos.row == this.row;
   }
 
-  // TODO
+  // TODO remove this later or test if kept
   // produces a string representation of this position
   public String toString() {
     return "(" + this.col + ", " + this.row + ")";
@@ -526,6 +525,8 @@ abstract class AContent implements IContent {
      * level.movePushable(String direction) - Level
      * level.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
      * level.updateLevel() - Level
+     * level.undoMove() - Level
+     * level.updateScore() - Level
      */
   }
 
@@ -629,7 +630,7 @@ class Hole extends AGround {
    */
 }
 
-// TODO
+// Represents Ice as the ground in the game Sokoban
 class Ice extends AGround {
 
   // Draws this Ice as its WorldImage equivalent
@@ -850,7 +851,6 @@ class Level {
     return boardImage;
   }
 
-  // TODO
   // draws this level's stats
   WorldImage drawStats() {
 
@@ -859,6 +859,7 @@ class Level {
             Color.BLACK);
     IContent player = this.findCell(this.playerPos).content;
 
+    // TODO (for debugging) delete this later or test if kept
     Posn moveUp = this.playerPos.movePosn("up");
     Posn pushUp = moveUp.movePosn("up");
     Posn moveDown = this.playerPos.movePosn("down");
@@ -1012,13 +1013,11 @@ class Level {
     return new Level(newBoard, this.playerPos, this.prevLevel, this.steps);
   }
 
-  // TODO test
   // rewinds the game by one step (increases the player's score)
   Level undoMove() {
     return this.prevLevel.updateScore(this.steps + 1);
   }
 
-  // TODO test
   // updates this level's score to the given score
   Level updateScore(int score) {
     return new Level(this.board, this.playerPos, this.prevLevel, score);
@@ -1031,6 +1030,7 @@ class Level {
    * this.playerPos - Posn
    * this.groundStr - String
    * this.contentStr - String
+   *
    * Methods
    * this.findCell(Posn posn) - Cell
    * this.draw() - WorldImage
@@ -1040,6 +1040,9 @@ class Level {
    * this.movePushable(String direction) - Level
    * this.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
    * this.updateLevel() - Level
+   * this.undoMove() - Level
+   * this.updateScore() - Level
+   *
    * Methods on Fields
    * this.playerPos.movePosn(String direction) - Posn
    * this.playerPos.withinBounds(Posn topLeft, Posn bottomRight) - boolean
@@ -1104,13 +1107,11 @@ class Sokoban extends World {
    * level.levelLost() - boolean
    * level.movePlayer(String direction, Level level) - Level
    * level.updateLevel() - Level
+   * level.undoMove() - Level
+   * level.updateScore() - Level
    */
 }
 
-// TODO
-//  - 2 worlds
-//  - return game over world when lose
-//  - update level, check win/lose conditions on start/initialization
 
 // Represents the tests for Sokoban
 class ExamplesSokoban {
@@ -1460,7 +1461,12 @@ class ExamplesSokoban {
                     NormalBlue), BlueBlank)), rowTwoImage));
   }
 
-  // TODO
+  void testDrawStats(Tester t) {
+    this.init();
+
+
+  }
+
   void testMovePlayer(Tester t) {
     this.init();
 
@@ -1700,4 +1706,44 @@ class ExamplesSokoban {
     updateTest = updateTest.updateLevel();
     t.checkExpect(updateTest.findCell(new Posn(0, 0)), new Cell(new Normal(), new Blank()));
   }
+
+  void testUndoMove(Tester t) {
+    this.init();
+
+    // FIXME gamelevel.playerpos field of field in tests allowed? (also in testMovePlayer)
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // init player pos
+    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
+    t.checkExpect(this.gameLevel.playerPos, new Posn(1,2)); // check player moved left
+    this.gameLevel = this.gameLevel.undoMove();
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // player back at init pos
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    t.checkExpect(this.gameLevel.playerPos, new Posn(3,2)); // check player pushed and moved right
+    this.gameLevel = this.gameLevel.movePushable("right").movePlayer("right");
+    t.checkExpect(this.gameLevel.playerPos, new Posn(4,2)); // check player pushed and moved right
+    this.gameLevel = this.gameLevel.undoMove();
+    t.checkExpect(this.gameLevel.playerPos, new Posn(3,2)); // check player pos undo
+    t.checkExpect(this.gameLevel.findCell(new Posn(4,2)).content,
+            new Trophy("blue")); // check trophy undo
+    this.gameLevel = this.gameLevel.undoMove();
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // check player pos undo
+    t.checkExpect(this.gameLevel.findCell(new Posn(3,2)).content,
+            new Trophy("blue")); // check trophy undo
+    this.gameLevel = this.gameLevel.undoMove();
+    t.checkExpect(this.gameLevel.playerPos, new Posn(2,2)); // no change, no more prev level
+  }
+
+  void testUpdateScore(Tester t) {
+    this.init();
+
+    // FIXME fof
+    t.checkExpect(this.gameLevel.steps, 0); // init score
+    this.gameLevel = this.gameLevel.movePushable("left").movePlayer("left");
+    t.checkExpect(this.gameLevel.steps, 1); // score inc on move
+    this.gameLevel = this.gameLevel.movePushable("up").movePlayer("up");
+    t.checkExpect(this.gameLevel.steps, 1); // no move, no change
+    this.gameLevel = this.gameLevel.undoMove();
+    t.checkExpect(this.gameLevel.steps, 2); // score inc on undo
+  }
+
+
 }
