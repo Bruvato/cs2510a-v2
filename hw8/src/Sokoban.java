@@ -313,6 +313,12 @@ class Cell {
     return new OverlayImage(this.content.contentToImage(), this.ground.groundToImage());
   }
 
+  // todo test/temp
+  // determines if the content in this cell can move to the given pos in the given level
+  boolean canMoveTo(Posn posn, Level level) {
+    return this.content.canMoveTo(posn, level);
+  }
+
   // determines if this cell won
   boolean cellWon() {
     return this.ground.groundWon(this.content);
@@ -329,10 +335,10 @@ class Cell {
     return this.ground.groundFall(this.content);
   }
 
-  // Determines if the content in this cell can slide on the ground
-  boolean cellSlide() { // todo tests templates
-    // todo
-    return false;
+  // todo test/temp
+  // determines if the ground in this cell allows its content to slide
+  boolean cellSlide(){
+    return this.ground.groundSlide(this.content);
   }
 
   /* Fields
@@ -376,6 +382,10 @@ interface IGround {
    * this.groundFall(IContent other) - boolean
    * Methods on Fields
    */
+
+  // todo tests, templates
+  // determines if this ground allows a given content to slide on it
+  boolean groundSlide(IContent other);
 }
 
 // a ground object
@@ -408,6 +418,12 @@ abstract class AGround implements IGround {
      * other.isVacant() - boolean
      * other.contentFall(IGround other) - boolean
      */
+  }
+
+  // determines if this ground allows a given content to slide on it
+  public boolean groundSlide(IContent other) {
+    // todo temp
+    return false;
   }
 
   /* Fields
@@ -528,7 +544,7 @@ abstract class AContent implements IContent {
      * level.levelWon() - boolean
      * level.levelLost() - boolean
      * level.movePlayer(String direction) - Level
-     * level.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
+     * level.switchContents(Posn pos1, Posn pos2, Posn playerPos) - Level
      * level.updateLevel() - Level
      * level.undoMove() - Level
      * level.updateScore() - Level
@@ -643,6 +659,10 @@ class Ice extends AGround {
     return Constants.ICE_SPRITE;
   }
 
+  // determines if this ice allows a given content to slide on it
+  public boolean groundSlide(IContent other) {
+    return !other.isFixed();
+  }
 }
 
 // --------- CONTENT OBJECTS ------------------------
@@ -668,6 +688,11 @@ class Blank extends AContent {
      * other.groundWon(IContent other) - boolean
      * other.groundFall(IContent other) - boolean
      */
+  }
+
+  // determines if this blank is fixed
+  public boolean isFixed() {
+    return true;
   }
 
   /* Fields
@@ -936,16 +961,20 @@ class Level {
     Posn moveToPos = this.playerPos.movePosn(direction); // pos of where player is moving to
     Posn pushToPos = moveToPos.movePosn(direction); // pos of where pushable is moving to
 
-    IContent player = this.findCell(this.playerPos).content;
-    IContent pushable = this.findCell(moveToPos).content;
+    Cell playerCell = this.findCell(this.playerPos);
+    Cell pushableCell = this.findCell(moveToPos);
 
-    if (pushable.canMoveTo(pushToPos, this)){ // can push implies can move
-      return this.boardSwitch(pushToPos, moveToPos, this.playerPos, this, this.steps)
-              .boardSwitch(moveToPos, this.playerPos, moveToPos, this, this.steps + 1);
+    if (pushableCell.canMoveTo(pushToPos, this)){ // can push implies can move
+      return this.switchContents(pushToPos, moveToPos, this.playerPos, this, this.steps)
+              .switchContents(moveToPos, this.playerPos, moveToPos, this, this.steps + 1)
+              .slideContent(pushToPos, direction)
+              .slidePlayer(moveToPos, direction);
     }
 
-    if (player.canMoveTo(moveToPos, this)) { // cannot push but can move
-      return this.boardSwitch(moveToPos, this.playerPos, moveToPos, this, this.steps + 1);
+    if (playerCell.canMoveTo(moveToPos, this)) { // cannot push but can move
+      return this.switchContents(moveToPos, this.playerPos, moveToPos, this, this.steps + 1)
+              .slideContent(pushToPos, direction)
+              .slidePlayer(moveToPos, direction);
     }
 
     return this; // cannot push, cannot move
@@ -953,7 +982,7 @@ class Level {
 
 
   // creates a new Level with the contents at the two given positions switched
-  Level boardSwitch(Posn pos1, Posn pos2, Posn playerPos, Level prevLevel, int steps) {
+  Level switchContents(Posn pos1, Posn pos2, Posn playerPos, Level prevLevel, int steps) {
     ArrayList<ArrayList<Cell>> newBoard = new ArrayList<>();
     Cell cell1 = findCell(pos1);
     Cell cell2 = findCell(pos2);
@@ -1021,6 +1050,43 @@ class Level {
     return new Level(this.board, this.playerPos, this.prevLevel, score);
   }
 
+  // TODO test, templates,
+  // slides a moveable content at the given pos in the given direction if possible
+  Level slideContent(Posn pos, String direction) {
+    Posn slideToPos = pos.movePosn(direction);
+    Cell slideCell = this.findCell(pos);
+
+    if (slideCell.canMoveTo(slideToPos, this) && slideCell.cellSlide()) {
+      return this.switchContents(pos, slideToPos, this.playerPos, this.prevLevel, this.steps)
+              .slideContent(slideToPos, direction);
+    }
+
+    return this;
+  }
+
+  // slides a player content at the given pos in the given direction if possible
+  Level slidePlayer(Posn playerPos, String direction) {
+    Posn slideToPos = playerPos.movePosn(direction);
+    Posn pushToPos = slideToPos.movePosn(direction);
+
+    Cell playerCell = this.findCell(playerPos);
+    Cell pushableCell = this.findCell(slideToPos);
+
+    if (pushableCell.canMoveTo(pushToPos, this)  && playerCell.cellSlide()) {
+      return this.switchContents(pushToPos, slideToPos, playerPos, this.prevLevel, this.steps)
+              .switchContents(playerPos, slideToPos, slideToPos, this.prevLevel, this.steps)
+              .slidePlayer(slideToPos, direction);
+    }
+
+    if (playerCell.canMoveTo(slideToPos, this) && playerCell.cellSlide()) {
+      return this.switchContents(playerPos, slideToPos, slideToPos, this.prevLevel, this.steps)
+              .slidePlayer(slideToPos, direction);
+    }
+
+    return this;
+  }
+  // todo fix out of bounds?
+
 
 
   /* Fields
@@ -1035,7 +1101,7 @@ class Level {
    * this.levelWon() - boolean
    * this.levelLost() - boolean
    * this.movePlayer(String direction) - Level
-   * this.boardSwitch(Posn pos1, Posn pos2, Posn playerPos) - Level
+   * this.switchContents(Posn pos1, Posn pos2, Posn playerPos) - Level
    * this.updateLevel() - Level
    * this.undoMove() - Level
    * this.updateScore() - Level
@@ -1126,6 +1192,8 @@ class ExamplesSokoban {
   String exampleIceContent2;
   String exampleIceGround1;
   String exampleIceGround2;
+  String exampleIceTestGround;
+  String exampleIceTestContent;
 
   String gameGround;
   String gameContent;
@@ -1139,6 +1207,7 @@ class ExamplesSokoban {
   Level small;
   Level ice1;
   Level ice2;
+  Level iceTest;
 
 
   Level gameLevel;
@@ -1172,6 +1241,15 @@ class ExamplesSokoban {
 
     exampleIceGround1 = "_________\n___II__B_\n_________";
     exampleIceContent1 = "WWWWWWWWW\nW>b_____W\nWWWWWWWWW";
+
+    exampleIceTestGround =
+            "_________\n_________\n___II____\n___II__B_\n___II__Y_\n___II__G_\n___II__R_" +
+                    "\n___III___\n_________\n_________";
+    exampleIceTestContent =
+            "_________\n_________\n_________\n_>b______\n___y_____\n____g____\n_____r___" +
+                    "\n__B______\n_________\n_________";
+
+
     exampleIceGround2 = "________\n__YI____\n__II____\n________\n________";
     exampleIceContent2 = "_WWWWWWW\nWW_____W\nW>y____W\nWW___WWW\n_WWWWW__";
 
@@ -1191,10 +1269,11 @@ class ExamplesSokoban {
     small = new Level(exampleSmallGround, exampleSmallContents);
     ice1 = new Level(exampleIceGround1, exampleIceContent1);
     ice2 = new Level(exampleIceGround2, exampleIceContent2);
+    iceTest = new Level(exampleIceTestGround, exampleIceTestContent);
 
     gameLevel = new Level(gameGround, gameContent);
 
-    game = new Sokoban(gameLevel);
+    game = new Sokoban(iceTest);
   }
 
   void testBigBang(Tester t) {
@@ -1488,15 +1567,15 @@ class ExamplesSokoban {
     t.checkExpect(this.gameLevel.playerPos, new Posn(4, 2));
   }
 
-  void testBoardSwitch(Tester t) {
+  void testswitchContents(Tester t) {
     this.init();
 
-    t.checkExpect(this.gameLevel.boardSwitch(new Posn(0, 0), new Posn(1, 0),
+    t.checkExpect(this.gameLevel.switchContents(new Posn(0, 0), new Posn(1, 0),
             this.gameLevel.playerPos, this.gameLevel, 0), this.gameLevel);
 
     init();
 
-    this.gameLevel = this.gameLevel.boardSwitch(new Posn(2, 2), new Posn(3, 2),
+    this.gameLevel = this.gameLevel.switchContents(new Posn(2, 2), new Posn(3, 2),
             this.gameLevel.playerPos, this.gameLevel, 0);
 
     t.checkExpect(this.gameLevel.findCell(new Posn(3, 2)),
@@ -1504,7 +1583,7 @@ class ExamplesSokoban {
 
     this.init();
 
-    this.gameLevel = this.gameLevel.boardSwitch(new Posn(2, 2), new Posn(1, 2),
+    this.gameLevel = this.gameLevel.switchContents(new Posn(2, 2), new Posn(1, 2),
             this.gameLevel.playerPos, this.gameLevel, 0);
 
     t.checkExpect(this.gameLevel.findCell(new Posn(1, 2)),
@@ -1556,7 +1635,7 @@ class ExamplesSokoban {
     t.checkExpect(gameLevel.findCell(new Posn(1, 2)).content.canMoveTo(new Posn(1, 1), gameLevel),
             false); // move blank to wall - false
     t.checkExpect(gameLevel.findCell(new Posn(0, 0)).content.canMoveTo(new Posn(1, 0), gameLevel),
-            true); // move blank to blank - true
+            false); // move blank to blank - true
   }
 
   // Ground methods
@@ -1652,7 +1731,7 @@ class ExamplesSokoban {
   void testIsFixed(Tester t) {
     this.init();
 
-    t.checkExpect(new Blank().isFixed(), false);
+    t.checkExpect(new Blank().isFixed(), true);
     t.checkExpect(new Wall().isFixed(), true);
     t.checkExpect(new Box().isFixed(), false);
     t.checkExpect(new Trophy("red").isFixed(), false);
